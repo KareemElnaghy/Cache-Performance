@@ -6,9 +6,13 @@ using namespace std;
 #define		DBG				1
 #define		DRAM_SIZE		(64*1024*1024)
 #define		CACHE_SIZE		(64*1024)
-#define     LINE_SIZE       (128)
+#define     LINE_SIZE       (32)
 
 unsigned int cacheFA[CACHE_SIZE/LINE_SIZE];
+unsigned int cacheDM[CACHE_SIZE/LINE_SIZE];
+bool valid[CACHE_SIZE/LINE_SIZE];
+unsigned int blocks = CACHE_SIZE / LINE_SIZE;
+
 enum cacheResType {MISS=0, HIT=1};
 int COUNT = 0;
 
@@ -59,18 +63,28 @@ unsigned int memGen6()
 
 
 // Direct Mapped Cache Simulator
-cacheResType cacheSimDM(unsigned int addr)
-{	
-	// This function accepts the memory address for the memory transaction and 
-	// returns whether it caused a cache miss or a cache hit
+cacheResType cacheSimDM(unsigned int addr) {
+    unsigned int shamt = log2(LINE_SIZE);
+    unsigned int indexBits = log2(blocks);
+    unsigned int index = addr % blocks;
+    unsigned int m =shamt + indexBits;
+    unsigned int tag = addr >> m;
 
-	// The current implementation assumes there is no cache; so, every transaction is a miss
-	return MISS;
+    if (cacheDM[index] == tag && valid[index])
+        return HIT;
+    else
+    {
+        cacheDM[index] = tag;
+        valid[index] = true;
+    }
+    return MISS;
 }
+
 
 // Fully Associative Cache Simulator
 cacheResType cacheSimFA(unsigned int addr)
-{	
+{
+    std::cout << "Address: " << addr << std::endl;
 	// This function accepts the memory address for the read and 
 	// returns whether it caused a cache miss or a cache hit
     unsigned int shamt = log2(LINE_SIZE);   // Number of bits used for offset
@@ -93,19 +107,21 @@ cacheResType cacheSimFA(unsigned int addr)
 }
 char *msg[2] = {"Miss","Hit"};
 
-#define		NO_OF_Iterations	1000000		// CHange to 1,000,000
+#define		NO_OF_Iterations	100000		// CHange to 1,000,000
 int main()
 {
 	unsigned int hit = 0;
 	cacheResType r;
 	
 	unsigned int addr;
-	cout << "Fully Associative Cache Simulator\n";
-
+	//cout << "Fully Associative Cache Simulator\n";
+    cout << "Direct Mapped Cache Simulator\n";
 	for(int inst=0;inst<NO_OF_Iterations;inst++)
 	{
-		addr = memGen5();
-		r = cacheSimFA(addr);
+		addr = memGen1();
+		//r = cacheSimFA(addr);
+      r = cacheSimDM(addr);
+
 		if(r == HIT) hit++;
 		cout <<"0x" << setfill('0') << setw(8) << hex << addr <<" ("<< msg[r] <<")\n";
 	}
