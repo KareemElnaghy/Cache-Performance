@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <vector>
 using namespace std;
 
 #define		DBG				1
@@ -24,6 +25,37 @@ unsigned int rand_()
     m_z = 36969 * (m_z & 65535) + (m_z >> 16);
     m_w = 18000 * (m_w & 65535) + (m_w >> 16);
     return (m_z << 16) + m_w;  /* 32-bit result */
+}
+
+vector<unsigned int> testcase1()
+{
+vector<unsigned int> addr;
+addr.push_back(0x0000000);
+addr.push_back(0x00000010);
+addr.push_back(0x0000100);
+addr.push_back(0x0001000);
+addr.push_back(0x0010000);
+addr.push_back(0x0100000);
+addr.push_back(0x1000000);
+addr.push_back(0x0000011);
+addr.push_back(0x0000110);
+addr.push_back(0x0011000);
+addr.push_back(0x0110000);
+addr.push_back(0x1100000);
+addr.push_back(0x0000111);
+addr.push_back(0x0001110);
+addr.push_back(0x0011100);
+addr.push_back(0x0111000);
+addr.push_back(0x1110000);
+addr.push_back(0x0001111);
+addr.push_back(0x0011110);
+addr.push_back(0x0111100);
+addr.push_back(0x1111000);
+addr.push_back(0x0011111);
+addr.push_back(0x0111110);
+addr.push_back(0x1111100);
+
+return addr;
 }
 
 unsigned int memGen1()
@@ -85,7 +117,7 @@ cacheResType cacheSimDM(unsigned int addr) {
 cacheResType cacheSimFA(unsigned int addr)
 {
     std::cout << "Address: " << addr << std::endl;
-	// This function accepts the memory address for the read and 
+	// This function accepts the memory address for the read and
 	// returns whether it caused a cache miss or a cache hit
     unsigned int shamt = log2(LINE_SIZE);   // Number of bits used for offset
     unsigned int tag = addr >> shamt;          // Extract Tag from address
@@ -112,18 +144,21 @@ int main()
 {
 	unsigned int hit = 0;
 	cacheResType r;
-	
+
+	//vector<unsigned int> addr = testcase1();
 	unsigned int addr;
 	//cout << "Fully Associative Cache Simulator\n";
     cout << "Direct Mapped Cache Simulator\n";
+	//for(int inst=0;inst<NO_OF_Iterations;inst++)
 	for(int inst=0;inst<NO_OF_Iterations;inst++)
+
 	{
 		addr = memGen1();
 		//r = cacheSimFA(addr);
       r = cacheSimDM(addr);
 
 		if(r == HIT) hit++;
-		cout <<"0x" << setfill('0') << setw(8) << hex << addr <<" ("<< msg[r] <<")\n";
+		cout <<"0x" << setfill('0') << setw(8) << hex << addr[inst] <<" ("<< msg[r] <<")\n";
 	}
 	cout << "Hit ratio = " << dec<<(100*hit/NO_OF_Iterations)<< endl;
 }
