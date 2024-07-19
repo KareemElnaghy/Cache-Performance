@@ -39,7 +39,7 @@ addr.push_back(0x00010000);
 addr.push_back(0x00100000);
 addr.push_back(0x01000000);
 addr.push_back(0x00000011);
-addr.push_back(0x00000110);
+addr.push_back(0x00000050);
 addr.push_back(0x00011111);
 addr.push_back(0x00111110);
 addr.push_back(0x01111100);
