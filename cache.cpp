@@ -2,12 +2,13 @@
 #include <iomanip>
 #include <cmath>
 #include <vector>
+#include <bitset>
 using namespace std;
 
 #define		DBG				1
 #define		DRAM_SIZE		(64*1024*1024)
 #define		CACHE_SIZE		(64*1024)
-#define     LINE_SIZE       (32)
+#define     LINE_SIZE       (128)
 
 unsigned int cacheFA[CACHE_SIZE/LINE_SIZE];
 unsigned int cacheDM[CACHE_SIZE/LINE_SIZE];
@@ -30,30 +31,18 @@ unsigned int rand_()
 vector<unsigned int> testcase1()
 {
 vector<unsigned int> addr;
-addr.push_back(0x0000000);
+addr.push_back(0x00000000);
 addr.push_back(0x00000010);
-addr.push_back(0x0000100);
-addr.push_back(0x0001000);
-addr.push_back(0x0010000);
-addr.push_back(0x0100000);
-addr.push_back(0x1000000);
-addr.push_back(0x0000011);
-addr.push_back(0x0000110);
-addr.push_back(0x0011000);
-addr.push_back(0x0110000);
-addr.push_back(0x1100000);
-addr.push_back(0x0000111);
-addr.push_back(0x0001110);
-addr.push_back(0x0011100);
-addr.push_back(0x0111000);
-addr.push_back(0x1110000);
-addr.push_back(0x0001111);
-addr.push_back(0x0011110);
-addr.push_back(0x0111100);
-addr.push_back(0x1111000);
-addr.push_back(0x0011111);
-addr.push_back(0x0111110);
-addr.push_back(0x1111100);
+addr.push_back(0x00000100);
+addr.push_back(0x00001000);
+addr.push_back(0x00010000);
+addr.push_back(0x00100000);
+addr.push_back(0x01000000);
+addr.push_back(0x00000011);
+addr.push_back(0x00000110);
+addr.push_back(0x00011111);
+addr.push_back(0x00111110);
+addr.push_back(0x01111100);
 
 return addr;
 }
@@ -96,11 +85,12 @@ unsigned int memGen6()
 
 // Direct Mapped Cache Simulator
 cacheResType cacheSimDM(unsigned int addr) {
-    unsigned int shamt = log2(LINE_SIZE);
+	unsigned int shamt = log2(LINE_SIZE);
     unsigned int indexBits = log2(blocks);
-    unsigned int index = addr % blocks;
-    unsigned int m =shamt + indexBits;
-    unsigned int tag = addr >> m;
+	unsigned int indexx = (pow(2,indexBits+1)-1);
+    unsigned int index = (addr >> shamt) & indexx;
+    unsigned int tag = addr >> (shamt + indexBits);
+
 
     if (cacheDM[index] == tag && valid[index])
         return HIT;
@@ -145,20 +135,20 @@ int main()
 	unsigned int hit = 0;
 	cacheResType r;
 
-	//vector<unsigned int> addr = testcase1();
-	unsigned int addr;
+	vector<unsigned int> addr = testcase1();
+	//unsigned int addr;
 	//cout << "Fully Associative Cache Simulator\n";
     cout << "Direct Mapped Cache Simulator\n";
+	for(int inst=0;inst<addr.size();inst++)
 	//for(int inst=0;inst<NO_OF_Iterations;inst++)
-	for(int inst=0;inst<NO_OF_Iterations;inst++)
 
 	{
-		addr = memGen1();
+		//addr = memGen1();
 		//r = cacheSimFA(addr);
-      r = cacheSimDM(addr);
+      r = cacheSimDM(addr[inst]);
 
 		if(r == HIT) hit++;
 		cout <<"0x" << setfill('0') << setw(8) << hex << addr[inst] <<" ("<< msg[r] <<")\n";
 	}
-	cout << "Hit ratio = " << dec<<(100*hit/NO_OF_Iterations)<< endl;
+	cout << "Hit ratio = " << dec<<(100*hit/addr.size())<< endl;
 }
