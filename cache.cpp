@@ -1,12 +1,14 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <vector>
+#include <bitset>
 using namespace std;
 
 #define		DBG				1
 #define		DRAM_SIZE		(64*1024*1024)
 #define		CACHE_SIZE		(64*1024)
-#define     LINE_SIZE       (32)
+#define     LINE_SIZE       (128)
 
 unsigned int cacheFA[CACHE_SIZE/LINE_SIZE];
 unsigned int cacheDM[CACHE_SIZE/LINE_SIZE];
@@ -24,6 +26,25 @@ unsigned int rand_()
     m_z = 36969 * (m_z & 65535) + (m_z >> 16);
     m_w = 18000 * (m_w & 65535) + (m_w >> 16);
     return (m_z << 16) + m_w;  /* 32-bit result */
+}
+
+vector<unsigned int> testcase1()
+{
+vector<unsigned int> addr;
+addr.push_back(0x00000000);
+addr.push_back(0x00000010);
+addr.push_back(0x00000100);
+addr.push_back(0x00001000);
+addr.push_back(0x00010000);
+addr.push_back(0x00100000);
+addr.push_back(0x01000000);
+addr.push_back(0x00000011);
+addr.push_back(0x00000050);
+addr.push_back(0x00011111);
+addr.push_back(0x00111110);
+addr.push_back(0x01111100);
+
+return addr;
 }
 
 unsigned int memGen1()
@@ -64,11 +85,12 @@ unsigned int memGen6()
 
 // Direct Mapped Cache Simulator
 cacheResType cacheSimDM(unsigned int addr) {
-    unsigned int shamt = log2(LINE_SIZE);
+	unsigned int shamt = log2(LINE_SIZE);
     unsigned int indexBits = log2(blocks);
-    unsigned int index = addr % blocks;
-    unsigned int m =shamt + indexBits;
-    unsigned int tag = addr >> m;
+	unsigned int indexx = (pow(2,indexBits+1)-1);
+    unsigned int index = (addr >> shamt) & indexx;
+    unsigned int tag = addr >> (shamt + indexBits);
+
 
     if (cacheDM[index] == tag && valid[index])
         return HIT;
@@ -85,7 +107,7 @@ cacheResType cacheSimDM(unsigned int addr) {
 cacheResType cacheSimFA(unsigned int addr)
 {
     std::cout << "Address: " << addr << std::endl;
-	// This function accepts the memory address for the read and 
+	// This function accepts the memory address for the read and
 	// returns whether it caused a cache miss or a cache hit
     unsigned int shamt = log2(LINE_SIZE);   // Number of bits used for offset
     unsigned int tag = addr >> shamt;          // Extract Tag from address
@@ -112,18 +134,21 @@ int main()
 {
 	unsigned int hit = 0;
 	cacheResType r;
-	
-	unsigned int addr;
+
+	vector<unsigned int> addr = testcase1();
+	//unsigned int addr;
 	//cout << "Fully Associative Cache Simulator\n";
     cout << "Direct Mapped Cache Simulator\n";
-	for(int inst=0;inst<NO_OF_Iterations;inst++)
+	for(int inst=0;inst<addr.size();inst++)
+	//for(int inst=0;inst<NO_OF_Iterations;inst++)
+
 	{
-		addr = memGen1();
+		//addr = memGen1();
 		//r = cacheSimFA(addr);
-      r = cacheSimDM(addr);
+      r = cacheSimDM(addr[inst]);
 
 		if(r == HIT) hit++;
-		cout <<"0x" << setfill('0') << setw(8) << hex << addr <<" ("<< msg[r] <<")\n";
+		cout <<"0x" << setfill('0') << setw(8) << hex << addr[inst] <<" ("<< msg[r] <<")\n";
 	}
-	cout << "Hit ratio = " << dec<<(100*hit/NO_OF_Iterations)<< endl;
+	cout << "Hit ratio = " << dec<<(100*hit/addr.size())<< endl;
 }
