@@ -106,7 +106,6 @@ cacheResType cacheSimDM(unsigned int addr) {
 // Fully Associative Cache Simulator
 cacheResType cacheSimFA(unsigned int addr)
 {
-    std::cout << "Address: " << addr << std::endl;
 	// This function accepts the memory address for the read and
 	// returns whether it caused a cache miss or a cache hit
     unsigned int shamt = log2(LINE_SIZE);   // Number of bits used for offset
@@ -129,26 +128,41 @@ cacheResType cacheSimFA(unsigned int addr)
 }
 char *msg[2] = {"Miss","Hit"};
 
-#define		NO_OF_Iterations	100000		// CHange to 1,000,000
+#define		NO_OF_Iterations	1000000		// CHange to 1,000,000
 int main()
 {
 	unsigned int hit = 0;
 	cacheResType r;
 
-	vector<unsigned int> addr = testcase1();
-	//unsigned int addr;
-	//cout << "Fully Associative Cache Simulator\n";
-    cout << "Direct Mapped Cache Simulator\n";
-	for(int inst=0;inst<addr.size();inst++)
-	//for(int inst=0;inst<NO_OF_Iterations;inst++)
+	// Experiment
+        unsigned int addr;
+        cout << "Cache Simulator\n";
+        for(int inst=0;inst<NO_OF_Iterations;inst++)
+        {
+            addr = memGen1();
+//            r = cacheSimFA(addr);
+            r = cacheSimDM(addr);
 
-	{
-		//addr = memGen1();
-		//r = cacheSimFA(addr);
-      r = cacheSimDM(addr[inst]);
 
-		if(r == HIT) hit++;
-		cout <<"0x" << setfill('0') << setw(8) << hex << addr[inst] <<" ("<< msg[r] <<")\n";
-	}
-	cout << "Hit ratio = " << dec<<(100*hit/addr.size())<< endl;
+            if(r == HIT) hit++;
+            cout <<"0x" << setfill('0') << setw(8) << hex << addr <<" ("<< msg[r] <<")\n";
+        }
+        cout << "Hit ratio = " << dec<<(100.0*hit/NO_OF_Iterations)<< endl;
+
+    // Test Cases
+
+//    vector<unsigned int> addrT = testcase1();
+//
+//    cout << "Test Case Cache Simulator\n";
+//    for(int inst=0;inst<addrT.size();inst++)
+//    {
+//        r = cacheSimFA(addrT[inst]);
+//        //r = cacheSimDM(addrT[inst]);
+//
+//        if(r == HIT) hit++;
+//        cout <<"0x" << setfill('0') << setw(8) << hex << addrT[inst] <<" ("<< msg[r] <<")\n";
+//    }
+//    cout << "Hit ratio = " << dec<<(100.0*hit/addrT.size())<< endl;
+
+
 }
