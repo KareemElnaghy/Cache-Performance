@@ -87,7 +87,7 @@ unsigned int memGen6()
 cacheResType cacheSimDM(unsigned int addr) {
 	unsigned int shamt = log2(LINE_SIZE);
     unsigned int indexBits = log2(blocks);
-	unsigned int indexx = (pow(2,indexBits+1)-1);
+	unsigned int indexx = (pow(2,indexBits)-1);
     unsigned int index = (addr >> shamt) & indexx;
     unsigned int tag = addr >> (shamt + indexBits);
 
