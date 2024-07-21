@@ -47,6 +47,10 @@ This project aims to develop and analyze cache performance using a simulator wri
 - **Configuration**: Line Size: 64 bytes
 - **Expected Outcome**: Hit Rate: 50%
 
+- ## Contributions
+- [Kareem Elnaghy](https://github.com/KareemElnaghy) 
+- [Malek Mahmoud](https://github.com/malekrouk)
+- [Mazin Bersy](https://github.com/mazinbersy) 
 
 
 
