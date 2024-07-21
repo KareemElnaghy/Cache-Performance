@@ -8,7 +8,7 @@ using namespace std;
 #define		DBG				1
 #define		DRAM_SIZE		(64*1024*1024)
 #define		CACHE_SIZE		(64*1024)
-#define     LINE_SIZE       (128)
+#define     LINE_SIZE       (16)
 
 unsigned int cacheFA[CACHE_SIZE/LINE_SIZE];
 unsigned int cacheDM[CACHE_SIZE/LINE_SIZE];
@@ -121,7 +121,7 @@ cacheResType cacheSimFA(unsigned int addr)
         cacheFA[COUNT++] = tag;
     else
     {
-        int randomIndex = rand()%(CACHE_SIZE/LINE_SIZE);    // Randomise cache location to store tag
+        int randomIndex = rand_()%(CACHE_SIZE/LINE_SIZE);    // Randomise cache location to store tag
         cacheFA[randomIndex] = tag;
     }
     return MISS;
@@ -139,9 +139,9 @@ int main()
         cout << "Cache Simulator\n";
         for(int inst=0;inst<NO_OF_Iterations;inst++)
         {
-            addr = memGen1();
-//            r = cacheSimFA(addr);
-            r = cacheSimDM(addr);
+            addr = memGen6();
+            r = cacheSimFA(addr);
+//            r = cacheSimDM(addr);
 
 
             if(r == HIT) hit++;
