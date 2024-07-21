@@ -60,16 +60,17 @@ unsigned int memGen6()
 
 // Direct Mapped Cache Simulator
 cacheResType cacheSimDM(unsigned int addr) {
-	unsigned int shamt = log2(LINE_SIZE);
-    unsigned int indexBits = log2(blocks);
-	unsigned int indexx = (pow(2,indexBits)-1);
-    unsigned int index = (addr >> shamt) & indexx;
-    unsigned int tag = addr >> (shamt + indexBits);
+	unsigned int shamt = log2(LINE_SIZE); // Number of Bits of Offset
+    unsigned int indexBits = log2(blocks); // Number of Bits of Index
+	unsigned int indexx = (pow(2,indexBits)-1); //Index Bits all set to 1
+    unsigned int index = (addr >> shamt) & indexx; //Index Value
+    unsigned int tag = addr >> (shamt + indexBits); //Tag Value
 
-    if (cacheDM[index] == tag && valid[index])
+    if (cacheDM[index] == tag && valid[index]) //If index is found in cache and valid bit is 1
         return HIT;
     else
     {
+        //Write block into cache and valid bit to 1
         cacheDM[index] = tag;
         valid[index] = true;
     }
